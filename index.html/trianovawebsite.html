@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRIANOVA — Corporate Training & Compliance Solutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --ink-80: #1a1a1a;
+    --ink-60: #333333;
+    --ink-40: #666666;
+    --ink-20: #999999;
+    --paper: #f5f1eb;
+    --paper-2: #ede9e1;
+    --paper-3: #e4dfd5;
+    --gold: #b8962e;
+    --gold-light: #d4ae4a;
+    --gold-pale: #f0e4c0;
+    --white: #ffffff;
+    --red-accent: #c0392b;
+    --nav-h: 72px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor {
+    position: fixed; width: 10px; height: 10px;
+    background: var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: multiply;
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1.5px solid var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, width 0.2s, height 0.2s, opacity 0.2s;
+    opacity: 0.6;
+  }
+
+  /* NOISE */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025; pointer-events: none; z-index: 9000;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: var(--nav-h); z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px;
+    background: rgba(245, 241, 235, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--paper-3);
+    transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: 0 2px 24px rgba(0,0,0,0.08); }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem; font-weight: 700; color: var(--ink);
+    text-decoration: none; letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-logo span {
+    display: inline-block; background: var(--ink); color: var(--paper);
+    padding: 3px 8px; font-size: 0.7rem; font-family: 'DM Mono', monospace;
+    font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 2px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-60); text-decoration: none;
+    position: relative; transition: color 0.2s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -3px; left: 0;
+    width: 0; height: 1px; background: var(--gold); transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    background: var(--ink); color: var(--paper) !important;
+    padding: 10px 22px; border-radius: 2px;
+    font-size: 0.75rem !important; font-weight: 600 !important;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    transition: background 0.2s, color 0.2s !important;
+  }
+  .nav-cta::after { display: none !important; }
+  .nav-cta:hover { background: var(--gold) !important; color: var(--ink) !important; }
+
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--ink); transition: all 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+  .mobile-menu {
+    display: none; position: fixed; top: var(--nav-h); left: 0; right: 0;
+    background: var(--paper); border-bottom: 1px solid var(--paper-3);
+    padding: 24px 40px; z-index: 99; flex-direction: column; gap: 20px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); text-decoration: none; }
+
+  /* ===================== HERO ===================== */
+  .hero {
+    min-height: 100vh;
+    padding-top: var(--nav-h);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    padding: 80px 60px 80px 40px;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; z-index: 2;
+  }
+  .hero-eyebrow {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 36px;
+    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-eyebrow-line { width: 40px; height: 1px; background: var(--gold); }
+  .hero-eyebrow-text {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold);
+  }
+  .hero-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 4.5vw, 4.2rem); font-weight: 900;
+    line-height: 1.05; letter-spacing: -0.02em; color: var(--ink);
+    margin-bottom: 32px; opacity: 0; animation: fadeUp 0.8s 0.35s forwards;
+  }
+  .hero-headline em { font-style: italic; color: var(--gold); }
+  .hero-sub {
+    font-size: 1.05rem; font-weight: 300; line-height: 1.7;
+    color: var(--ink-60); max-width: 460px; margin-bottom: 48px;
+    opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 16px; align-items: center;
+    opacity: 0; animation: fadeUp 0.8s 0.65s forwards;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--ink); color: var(--paper);
+    padding: 16px 32px; font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+    border-radius: 2px; transition: background 0.25s, transform 0.2s;
+    border: none; cursor: none;
+  }
+  .btn-primary:hover { background: var(--gold); color: var(--ink); transform: translateY(-2px); }
+  .btn-primary svg { transition: transform 0.2s; }
+  .btn-primary:hover svg { transform: translateX(4px); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: transparent; color: var(--ink);
+    padding: 16px 28px; font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+    border: 1.5px solid var(--ink-40); border-radius: 2px;
+    transition: border-color 0.25s, color 0.25s; cursor: none;
+  }
+  .btn-ghost:hover { border-color: var(--ink); }
+
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--paper-3);
+    border: 1px solid var(--paper-3); margin-top: 72px;
+    opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .hero-stat {
+    background: var(--paper); padding: 24px 20px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .hero-stat-num {
+    font-family: 'Playfair Display', serif; font-size: 2rem;
+    font-weight: 700; color: var(--ink); line-height: 1;
+  }
+  .hero-stat-label {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-40);
+  }
+
+  /* ===================== HERO RIGHT — REBUILT ===================== */
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    background: #0d0d0d;
+  }
+
+  /* Subtle grid lines */
+  .hero-right-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(184,150,46,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(184,150,46,0.07) 1px, transparent 1px);
+    background-size: 52px 52px;
+    z-index: 0;
+  }
+
+  /* Big decorative background text */
+  .hero-right-bg-word {
+    position: absolute;
+    bottom: -20px; left: -10px;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(120px, 14vw, 180px);
+    font-weight: 900;
+    font-style: italic;
+    color: rgba(184,150,46,0.045);
+    line-height: 1;
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+    z-index: 1;
+    letter-spacing: -0.04em;
+  }
+
+  /* Diagonal gold accent bar */
+  .hero-right-diag {
+    position: absolute;
+    top: 0; right: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(180deg, transparent 0%, var(--gold) 30%, var(--gold-light) 70%, transparent 100%);
+    opacity: 0.5;
+    z-index: 2;
+  }
+
+  /* Content layer */
+  .hero-right-content {
+    position: absolute; inset: 0; z-index: 3;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 48px 52px;
+  }
+
+  /* Top row: rotating badge + sector chips */
+  .hero-right-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    opacity: 0; animation: fadeIn 1s 1s forwards;
+  }
+
+  /* Rotating text badge */
+  .hero-badge-wrap {
+    position: relative; width: 110px; height: 110px; flex-shrink: 0;
+  }
+  .hero-badge-svg {
+    animation: spin 22s linear infinite;
+    width: 110px; height: 110px;
+  }
+  .hero-badge-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px;
+  }
+  .hero-badge-center span:first-child {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem; font-weight: 900; color: var(--gold); line-height: 1;
+  }
+  .hero-badge-center span:last-child {
+    font-size: 0.52rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(245,241,235,0.5);
+  }
+
+  /* Sector pill stack */
+  .hero-sector-pills {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+  }
+  .sector-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(184,150,46,0.1);
+    border: 1px solid rgba(184,150,46,0.22);
+    border-radius: 2px;
+    padding: 6px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(245,241,235,0.65);
+    white-space: nowrap;
+  }
+  .sector-pill-dot {
+    width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0;
+  }
+
+  /* Middle: Big stat cards */
+  .hero-right-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+    opacity: 0; animation: fadeUp 0.8s 1.1s forwards;
+  }
+  .hero-right-stat-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    padding: 24px 22px;
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+  }
+  .hero-right-stat-card:hover { background: rgba(184,150,46,0.08); }
+  .hero-right-stat-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 0; height: 2px; background: var(--gold);
+    transition: width 0.4s ease;
+  }
+  .hero-right-stat-card:hover::after { width: 100%; }
+  .stat-card-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem; font-weight: 900; color: var(--gold);
+    line-height: 1; margin-bottom: 6px;
+  }
+  .stat-card-label {
+    font-size: 0.7rem; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(245,241,235,0.45);
+    line-height: 1.4;
+  }
+  .stat-card-icon {
+    position: absolute; top: 16px; right: 16px;
+    opacity: 0.12; color: var(--gold);
+  }
+
+  /* Divider line */
+  .hero-right-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,150,46,0.3) 40%, rgba(184,150,46,0.3) 60%, transparent);
+    margin: 4px 0;
+    opacity: 0; animation: fadeIn 0.8s 1.25s forwards;
+  }
+
+  /* Bottom: Testimonial */
+  .hero-testimonial {
+    border-left: 3px solid var(--gold);
+    padding-left: 22px;
+    opacity: 0; animation: fadeUp 0.8s 1.3s forwards;
+  }
+  .hero-testimonial-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; font-weight: 400; font-style: italic;
+    color: rgba(245,241,235,0.88); line-height: 1.6; margin-bottom: 12px;
+  }
+  .hero-testimonial-author {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold);
+  }
+
+  /* Delivery cities strip at very bottom of right panel */
+  .hero-cities-strip {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin-top: 28px;
+    opacity: 0; animation: fadeIn 1s 1.5s forwards;
+  }
+  .cities-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(184,150,46,0.6); flex-shrink: 0;
+  }
+  .cities-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(184,150,46,0.3); flex-shrink: 0; }
+  .city-name {
+    font-size: 0.68rem; font-weight: 400; letter-spacing: 0.06em;
+    color: rgba(245,241,235,0.35); text-transform: uppercase;
+  }
+
+  /* ===================== MARQUEE ===================== */
+  .marquee-section {
+    background: var(--ink); padding: 18px 0; overflow: hidden;
+    border-top: 1px solid rgba(184,150,46,0.3);
+    border-bottom: 1px solid rgba(184,150,46,0.3);
+  }
+  .marquee-track {
+    display: flex; gap: 48px;
+    animation: marquee 25s linear infinite; white-space: nowrap;
+  }
+  .marquee-track:hover { animation-play-state: paused; }
+  .marquee-item {
+    font-family: 'DM Mono', monospace; font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(245,241,235,0.5);
+    display: flex; align-items: center; gap: 48px; flex-shrink: 0;
+  }
+  .marquee-dot { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+
+  @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* SECTION COMMON */
+  section { padding: 100px 40px; }
+  .section-label { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .section-label-line { width: 32px; height: 1px; background: var(--gold); }
+  .section-label-text {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold);
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3vw, 2.8rem); font-weight: 700;
+    line-height: 1.15; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 20px;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-body { font-size: 1rem; font-weight: 300; line-height: 1.75; color: var(--ink-60); max-width: 560px; }
+
+  /* ABOUT */
+  .about { background: var(--white); padding: 100px 40px; }
+  .about-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  }
+  .about-pillars { display: grid; grid-template-columns: 1fr; gap: 2px; margin-top: 40px; }
+  .about-pillar {
+    display: flex; gap: 20px; padding: 24px; background: var(--paper);
+    border-left: 3px solid transparent;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .about-pillar:hover { background: var(--gold-pale); border-left-color: var(--gold); }
+  .about-pillar-num { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--gold); font-weight: 500; letter-spacing: 0.05em; flex-shrink: 0; padding-top: 3px; }
+  .about-pillar-content h4 { font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+  .about-pillar-content p { font-size: 0.85rem; font-weight: 300; color: var(--ink-60); line-height: 1.6; }
+  .about-right { display: flex; flex-direction: column; gap: 32px; }
+  .about-visual { background: var(--ink); padding: 48px; position: relative; overflow: hidden; }
+  .about-visual-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(184,150,46,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(184,150,46,0.06) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+  .about-visual-content { position: relative; z-index: 1; }
+  .about-visual h3 {
+    font-family: 'Playfair Display', serif; font-size: 1.4rem;
+    font-style: italic; color: var(--paper); line-height: 1.5; margin-bottom: 24px;
+  }
+  .about-visual-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .about-visual-stat-num { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 700; color: var(--gold); line-height: 1; }
+  .about-visual-stat-label { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(245,241,235,0.5); margin-top: 4px; }
+
+  /* PROGRAMMES */
+  .programmes { background: var(--paper); max-width: 100%; padding: 100px 40px; }
+  .programmes-inner { max-width: 1200px; margin: 0 auto; }
+  .programmes-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; }
+  .programmes-tabs { display: flex; gap: 0; border: 1.5px solid var(--paper-3); overflow: hidden; border-radius: 2px; }
+  .tab-btn {
+    padding: 10px 20px; font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    border: none; background: var(--paper); color: var(--ink-40);
+    cursor: none; transition: all 0.2s;
+    border-right: 1.5px solid var(--paper-3);
+  }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn.active { background: var(--ink); color: var(--paper); }
+  .tab-btn:hover:not(.active) { background: var(--paper-2); color: var(--ink); }
+  .programme-card {
+    background: var(--white); padding: 36px 32px;
+    display: flex; flex-direction: column; gap: 16px;
+    transition: background 0.2s; position: relative; overflow: hidden;
+  }
+  .programme-card::before {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 100%; height: 3px; background: var(--gold);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+  }
+  .programme-card:hover { background: var(--paper); }
+  .programme-card:hover::before { transform: scaleX(1); }
+  .programme-cat {
+    display: inline-block; font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--gold); background: var(--gold-pale);
+    padding: 4px 10px; border-radius: 2px; align-self: flex-start;
+  }
+  .programme-title { font-size: 1rem; font-weight: 600; color: var(--ink); line-height: 1.4; }
+  .programme-desc { font-size: 0.85rem; font-weight: 300; color: var(--ink-60); line-height: 1.65; flex: 1; }
+  .programme-link {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink); text-decoration: none;
+    margin-top: 8px; transition: color 0.2s; cursor: none;
+  }
+  .programme-link:hover { color: var(--gold); }
+  .programme-link svg { transition: transform 0.2s; }
+  .programme-link:hover svg { transform: translateX(4px); }
+  .programme-panel { display: none; }
+  .programme-panel.active { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--paper-3); }
+
+  /* TRAINERS */
+  .trainers { background: var(--ink); padding: 100px 40px; }
+  .trainers-inner { max-width: 1200px; margin: 0 auto; }
+  .trainers .section-label-line { background: var(--gold); }
+  .trainers .section-title { color: var(--paper); }
+  .trainers .section-body { color: rgba(245,241,235,0.6); }
+  .trainers-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 2px; background: rgba(255,255,255,0.06); margin-top: 60px;
+  }
+  .trainer-card {
+    background: var(--ink-80); padding: 32px 24px;
+    transition: background 0.2s; position: relative; cursor: none;
+  }
+  .trainer-card:hover { background: #222; }
+  .trainer-avatar {
+    width: 52px; height: 52px; border-radius: 50%; background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700;
+    color: var(--ink); margin-bottom: 20px; flex-shrink: 0;
+  }
+  .trainer-name { font-size: 0.95rem; font-weight: 600; color: var(--paper); margin-bottom: 4px; }
+  .trainer-role { font-size: 0.72rem; font-weight: 400; color: var(--gold); letter-spacing: 0.05em; margin-bottom: 16px; }
+  .trainer-exp { font-size: 0.8rem; font-weight: 300; color: rgba(245,241,235,0.5); line-height: 1.6; margin-bottom: 20px; }
+  .trainer-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .trainer-tag {
+    font-family: 'DM Mono', monospace; font-size: 0.62rem; font-weight: 500;
+    letter-spacing: 0.06em; color: rgba(184,150,46,0.8);
+    border: 1px solid rgba(184,150,46,0.25); padding: 3px 8px; border-radius: 2px;
+  }
+
+  /* CLIENTS */
+  .clients { background: var(--paper-2); padding: 100px 40px; }
+  .clients-inner { max-width: 1200px; margin: 0 auto; }
+  .clients-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 48px; margin-bottom: 36px; }
+  .filter-btn {
+    padding: 8px 18px; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    border: 1.5px solid var(--paper-3); background: transparent;
+    color: var(--ink-60); cursor: none; border-radius: 2px; transition: all 0.2s;
+  }
+  .filter-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .filter-btn:hover:not(.active) { border-color: var(--ink-40); color: var(--ink); }
+  .clients-sector-grid { display: none; }
+  .clients-sector-grid.active { display: block; }
+  .sector-header {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
+    margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--paper-3);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .sector-count { background: var(--ink); color: var(--paper); padding: 2px 8px; font-size: 0.62rem; border-radius: 2px; }
+  .clients-logo-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 2px; background: var(--paper-3);
+  }
+  .client-logo-item {
+    background: var(--white); padding: 20px 16px;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; font-size: 0.82rem; font-weight: 600; color: var(--ink-60);
+    transition: background 0.2s, color 0.2s; min-height: 70px;
+  }
+  .client-logo-item:hover { background: var(--gold-pale); color: var(--ink); }
+  .all-sectors-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .sector-block-title {
+    font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600;
+    color: var(--ink); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sector-block-title::before {
+    content: ''; display: block; width: 6px; height: 6px;
+    background: var(--gold); border-radius: 50%; flex-shrink: 0;
+  }
+  .sector-block-clients { font-size: 0.82rem; font-weight: 300; color: var(--ink-60); line-height: 2; }
+
+  /* PROCESS */
+  .process { background: var(--white); padding: 100px 40px; }
+  .process-inner { max-width: 1200px; margin: 0 auto; }
+  .process-steps {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 0; margin-top: 60px; position: relative;
+  }
+  .process-steps::before {
+    content: ''; position: absolute; top: 36px; left: 10%; right: 10%; height: 1px;
+    background: linear-gradient(90deg, var(--gold), var(--paper-3), var(--gold)); z-index: 0;
+  }
+  .process-step {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; padding: 0 16px; position: relative; z-index: 1;
+    opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s;
+  }
+  .process-step.visible { opacity: 1; transform: none; }
+  .process-step-num {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--paper); border: 2px solid var(--paper-3);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700;
+    color: var(--gold); margin-bottom: 24px; transition: background 0.3s, border-color 0.3s; flex-shrink: 0;
+  }
+  .process-step:hover .process-step-num { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .process-step-title { font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 10px; line-height: 1.3; }
+  .process-step-desc { font-size: 0.8rem; font-weight: 300; color: var(--ink-60); line-height: 1.6; }
+
+  /* FORMATS */
+  .formats { background: var(--paper); padding: 80px 40px; }
+  .formats-inner { max-width: 1200px; margin: 0 auto; }
+  .formats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--paper-3); margin-top: 60px; }
+  .format-card { background: var(--white); padding: 36px 28px; transition: background 0.2s; }
+  .format-card:hover { background: var(--paper); }
+  .format-icon {
+    width: 44px; height: 44px; background: var(--gold-pale); border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px; color: var(--gold);
+  }
+  .format-title { font-size: 0.95rem; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
+  .format-desc { font-size: 0.82rem; font-weight: 300; color: var(--ink-60); line-height: 1.7; }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--ink); padding: 100px 40px; }
+  .testimonials-inner { max-width: 1200px; margin: 0 auto; }
+  .testimonials .section-title { color: var(--paper); }
+  .testimonials .section-body { color: rgba(245,241,235,0.5); }
+  .testimonials-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 2px; background: rgba(255,255,255,0.06); margin-top: 60px;
+  }
+  .testimonial-card { background: var(--ink-80); padding: 40px 36px; position: relative; transition: background 0.2s; }
+  .testimonial-card:hover { background: #222; }
+  .testimonial-quote { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 16px; opacity: 0.4; }
+  .testimonial-text { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-style: italic; font-weight: 400; color: rgba(245,241,235,0.9); line-height: 1.7; margin-bottom: 28px; }
+  .testimonial-author { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+
+  /* FAQ */
+  .faq { background: var(--paper-2); padding: 100px 40px; }
+  .faq-inner { max-width: 800px; margin: 0 auto; }
+  .faq-list { margin-top: 60px; }
+  .faq-item { border-bottom: 1px solid var(--paper-3); }
+  .faq-question {
+    width: 100%; background: none; border: none; text-align: left;
+    padding: 24px 0; display: flex; justify-content: space-between;
+    align-items: center; gap: 20px; cursor: none;
+    font-size: 0.95rem; font-weight: 600; color: var(--ink); line-height: 1.4;
+  }
+  .faq-icon {
+    width: 28px; height: 28px; background: var(--paper);
+    border: 1.5px solid var(--paper-3); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 0.2s, transform 0.3s;
+  }
+  .faq-item.open .faq-icon { background: var(--ink); transform: rotate(45deg); }
+  .faq-item.open .faq-icon svg { stroke: var(--paper); }
+  .faq-answer {
+    font-size: 0.88rem; font-weight: 300; color: var(--ink-60); line-height: 1.75;
+    max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s;
+    padding-bottom: 0;
+  }
+  .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 24px; }
+
+  /* WHY US */
+  .why { background: var(--paper); padding: 100px 40px; }
+  .why-inner { max-width: 1200px; margin: 0 auto; }
+  .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--paper-3); margin-top: 60px; }
+  .why-card { background: var(--white); padding: 36px 32px; transition: background 0.25s; position: relative; overflow: hidden; }
+  .why-card:hover { background: var(--paper); }
+  .why-num { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: var(--paper-3); line-height: 1; margin-bottom: 16px; transition: color 0.2s; }
+  .why-card:hover .why-num { color: var(--gold-pale); }
+  .why-title { font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 12px; line-height: 1.35; }
+  .why-desc { font-size: 0.83rem; font-weight: 300; color: var(--ink-60); line-height: 1.7; }
+
+  /* CTA */
+  .cta-section { background: var(--ink); padding: 100px 40px; position: relative; overflow: hidden; }
+  .cta-section::before { content: ''; position: absolute; top: -80px; right: -80px; width: 400px; height: 400px; border-radius: 50%; border: 1px solid rgba(184,150,46,0.15); }
+  .cta-section::after { content: ''; position: absolute; bottom: -100px; left: -100px; width: 500px; height: 500px; border-radius: 50%; border: 1px solid rgba(184,150,46,0.08); }
+  .cta-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; position: relative; z-index: 1; }
+  .cta-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 3vw, 2.8rem); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; color: var(--paper); margin-bottom: 20px; }
+  .cta-title em { color: var(--gold); font-style: italic; }
+  .cta-body { font-size: 1rem; font-weight: 300; color: rgba(245,241,235,0.6); line-height: 1.75; margin-bottom: 36px; }
+  .cta-contact-items { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
+  .cta-contact-item { display: flex; align-items: center; gap: 12px; font-size: 0.88rem; color: rgba(245,241,235,0.7); }
+  .cta-contact-item a { color: var(--gold); text-decoration: none; }
+  .cta-contact-icon { width: 32px; height: 32px; background: rgba(184,150,46,0.15); border-radius: 2px; display: flex; align-items: center; justify-content: center; color: var(--gold); flex-shrink: 0; }
+  .cta-form { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 40px; border-radius: 2px; }
+  .cta-form h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; color: var(--paper); margin-bottom: 28px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .form-group label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,241,235,0.5); }
+  .form-group input, .form-group select, .form-group textarea {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--paper); padding: 12px 16px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem; font-weight: 300; border-radius: 2px; outline: none;
+    transition: border-color 0.2s; cursor: none;
+  }
+  .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(245,241,235,0.25); }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); }
+  .form-group select option { background: var(--ink); }
+  .form-group textarea { resize: vertical; min-height: 90px; }
+  .form-submit {
+    width: 100%; background: var(--gold); color: var(--ink); padding: 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; border: none; border-radius: 2px;
+    cursor: none; transition: background 0.2s, transform 0.2s; margin-top: 8px;
+  }
+  .form-submit:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .form-note { font-size: 0.72rem; color: rgba(245,241,235,0.35); text-align: center; margin-top: 12px; }
+  .form-success { display: none; text-align: center; padding: 48px 24px; }
+  .form-success h4 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); margin-bottom: 10px; }
+  .form-success p { font-size: 0.88rem; color: rgba(245,241,235,0.6); }
+
+  /* FOOTER */
+  footer { background: #080808; padding: 48px 40px 32px; border-top: 1px solid rgba(184,150,46,0.2); }
+  .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 40px; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--paper); margin-bottom: 12px; }
+  .footer-tagline { font-size: 0.8rem; font-weight: 300; color: rgba(245,241,235,0.4); line-height: 1.7; max-width: 280px; margin-bottom: 20px; }
+  .footer-cert { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(184,150,46,0.3); padding: 8px 14px; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+  .footer-col h4 { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a { font-size: 0.82rem; font-weight: 300; color: rgba(245,241,235,0.5); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--paper); }
+  .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; }
+  .footer-copy { font-size: 0.75rem; color: rgba(245,241,235,0.3); }
+  .footer-reach { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: rgba(184,150,46,0.6); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  .scroll-top {
+    position: fixed; bottom: 32px; right: 32px; width: 44px; height: 44px;
+    background: var(--ink); color: var(--paper); border: none; border-radius: 2px;
+    display: flex; align-items: center; justify-content: center; cursor: none; z-index: 50;
+    opacity: 0; transform: translateY(16px); transition: opacity 0.3s, transform 0.3s, background 0.2s;
+  }
+  .scroll-top.visible { opacity: 1; transform: none; }
+  .scroll-top:hover { background: var(--gold); color: var(--ink); }
+
+  /* RESPONSIVE */
+  @media (max-width: 1100px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 80px 40px; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .about-inner { grid-template-columns: 1fr; gap: 48px; }
+    .about-right { display: none; }
+    .trainers-grid { grid-template-columns: repeat(3, 1fr); }
+    .process-steps { grid-template-columns: repeat(3, 1fr); }
+    .process-steps::before { display: none; }
+    .cta-inner { grid-template-columns: 1fr; gap: 48px; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .why-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    section { padding: 72px 24px; }
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu { padding: 24px; }
+    .hero-left { padding: 60px 24px; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .programmes-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+    .programme-panel.active { grid-template-columns: 1fr; }
+    .trainers-grid { grid-template-columns: 1fr 1fr; }
+    .formats-grid { grid-template-columns: 1fr 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    .cta-inner { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+    .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    .all-sectors-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .hero-actions { flex-direction: column; align-items: flex-start; }
+    .trainers-grid { grid-template-columns: 1fr; }
+    .formats-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    TRIANOVA - Consulting Group
+    <span>Est.</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#programmes">Programmes</a></li>
+    <li><a href="#trainers">Trainers</a></li>
+    <li><a href="#clients">Clients</a></li>
+    <li><a href="#process">How We Work</a></li>
+    <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#programmes" onclick="closeMobile()">Programmes</a>
+  <a href="#trainers" onclick="closeMobile()">Trainers</a>
+  <a href="#clients" onclick="closeMobile()">Clients</a>
+  <a href="#process" onclick="closeMobile()">How We Work</a>
+  <a href="#contact" onclick="closeMobile()">Get in Touch</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-line"></div>
+      <span class="hero-eyebrow-text">Corporate Training & Compliance</span>
+    </div>
+    <h1 class="hero-headline">
+      Organisations that take training <em>seriously</em> choose experts.
+    </h1>
+    <p class="hero-sub">
+      We help India's leading corporations, PSUs, and institutions build compliant, capable, and future-ready teams — through training delivered by practitioners, not presenters.
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">
+        Discuss a Programme
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#programmes" class="btn-ghost">View Programmes</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num">80+</span>
+        <span class="hero-stat-label">Organisations Trained</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">12+</span>
+        <span class="hero-stat-label">Sectors Served</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">25+</span>
+        <span class="hero-stat-label">PSU Clients</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">PAN</span>
+        <span class="hero-stat-label">India Delivery</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HERO RIGHT — REBUILT ===== -->
+  <div class="hero-right">
+    <div class="hero-right-grid"></div>
+    <div class="hero-right-bg-word">Expert.</div>
+    <div class="hero-right-diag"></div>
+
+    <div class="hero-right-content">
+      <!-- Top: badge + sector chips -->
+      <div class="hero-right-top">
+        <div class="hero-badge-wrap">
+          <svg class="hero-badge-svg" viewBox="0 0 110 110">
+            <defs>
+              <path id="badgecircle" d="M 55,55 m -42,0 a 42,42 0 1,1 84,0 a 42,42 0 1,1 -84,0"/>
+            </defs>
+            <text font-size="9.8" font-family="DM Mono, monospace" fill="rgba(184,150,46,0.55)" letter-spacing="3.5" font-weight="500">
+              <textPath href="#badgecircle">PAN-INDIA · SINCE 2010 · COMPLIANCE ·</textPath>
+            </text>
+          </svg>
+          <div class="hero-badge-center">
+            <span>15+</span>
+            <span>YRS EXP</span>
+          </div>
+        </div>
+
+        <div class="hero-sector-pills">
+          <div class="sector-pill"><span class="sector-pill-dot"></span>POSH & IC Training</div>
+          <div class="sector-pill"><span class="sector-pill-dot"></span>Companies Act</div>
+          <div class="sector-pill"><span class="sector-pill-dot"></span>Labour Law</div>
+          <div class="sector-pill"><span class="sector-pill-dot"></span>AI for Business</div>
+          <div class="sector-pill"><span class="sector-pill-dot"></span>ESG & CSR</div>
+        </div>
+      </div>
+
+      <!-- Middle: stat cards -->
+      <div class="hero-right-stats">
+        <div class="hero-right-stat-card">
+          <svg class="stat-card-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <div class="stat-card-num">80+</div>
+          <div class="stat-card-label">Organisations<br>Trained</div>
+        </div>
+        <div class="hero-right-stat-card">
+          <svg class="stat-card-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          <div class="stat-card-num">25+</div>
+          <div class="stat-card-label">PSU &amp; Govt<br>Clients</div>
+        </div>
+        <div class="hero-right-stat-card">
+          <svg class="stat-card-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <div class="stat-card-num">12+</div>
+          <div class="stat-card-label">Sectors<br>Served</div>
+        </div>
+        <div class="hero-right-stat-card">
+          <svg class="stat-card-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div class="stat-card-num">15+</div>
+          <div class="stat-card-label">Years of<br>Active Practice</div>
+        </div>
+      </div>
+
+      <div class="hero-right-divider"></div>
+
+      <!-- Bottom: testimonial -->
+      <div class="hero-testimonial">
+        <p class="hero-testimonial-text">"The most practically useful training session our IC members have attended — they left with real tools, not just awareness."</p>
+        <p class="hero-testimonial-author">— HR Head, Leading BFSI Organisation</p>
+      </div>
+
+      <!-- Cities strip -->
+      <div class="hero-cities-strip">
+        <span class="cities-label">Delivery</span>
+        <span class="cities-dot"></span>
+        <span class="city-name">Mumbai</span>
+        <span class="cities-dot"></span>
+        <span class="city-name">Delhi</span>
+        <span class="cities-dot"></span>
+        <span class="city-name">Kolkata</span>
+        <span class="cities-dot"></span>
+        <span class="city-name">Raipur</span>
+        <span class="cities-dot"></span>
+        <span class="city-name">Bhubaneswar</span>
+        <span class="cities-dot"></span>
+        <span class="city-name">+ More</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee">
+    <span class="marquee-item">NTPC <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Tata Motors <span class="marquee-dot"></span></span>
+    <span class="marquee-item">HDFC Bank <span class="marquee-dot"></span></span>
+    <span class="marquee-item">L&T <span class="marquee-dot"></span></span>
+    <span class="marquee-item">IBM <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Siemens <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Coal India <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Accenture <span class="marquee-dot"></span></span>
+    <span class="marquee-item">DLF <span class="marquee-dot"></span></span>
+    <span class="marquee-item">ITC <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Tata Power <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Vedanta <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Dr. Reddy's <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Capgemini <span class="marquee-dot"></span></span>
+    <span class="marquee-item">JSW Steel <span class="marquee-dot"></span></span>
+    <span class="marquee-item">NALCO <span class="marquee-dot"></span></span>
+    <span class="marquee-item">NTPC <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Tata Motors <span class="marquee-dot"></span></span>
+    <span class="marquee-item">HDFC Bank <span class="marquee-dot"></span></span>
+    <span class="marquee-item">L&T <span class="marquee-dot"></span></span>
+    <span class="marquee-item">IBM <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Siemens <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Coal India <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Accenture <span class="marquee-dot"></span></span>
+    <span class="marquee-item">DLF <span class="marquee-dot"></span></span>
+    <span class="marquee-item">ITC <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Tata Power <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Vedanta <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Dr. Reddy's <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Capgemini <span class="marquee-dot"></span></span>
+    <span class="marquee-item">JSW Steel <span class="marquee-dot"></span></span>
+    <span class="marquee-item">NALCO <span class="marquee-dot"></span></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-left">
+      <div class="section-label reveal">
+        <div class="section-label-line"></div>
+        <span class="section-label-text">About Us</span>
+      </div>
+      <h2 class="section-title reveal reveal-delay-1">
+        Where legal rigour meets <em>lived</em> corporate experience.
+      </h2>
+      <p class="section-body reveal reveal-delay-2">
+        We are a specialist Corporate Training & Compliance Solutions firm. Every programme we deliver draws on active legal practice, senior corporate leadership, and deep HR expertise — because the only training that genuinely changes behaviour is training that reflects how the real world actually works.
+      </p>
+      <div class="about-pillars reveal reveal-delay-3">
+        <div class="about-pillar">
+          <span class="about-pillar-num">01</span>
+          <div class="about-pillar-content">
+            <h4>Active Legal & Compliance Practice</h4>
+            <p>Our faculty includes practicing Company Secretaries and compliance specialists managing live governance mandates — bringing current regulatory knowledge, not archived theory.</p>
+          </div>
+        </div>
+        <div class="about-pillar">
+          <span class="about-pillar-num">02</span>
+          <div class="about-pillar-content">
+            <h4>Senior Corporate Leadership Backgrounds</h4>
+            <p>Trainers who have run multi-crore P&Ls, scaled national brands, and led large teams — so the business realities they discuss are ones they have navigated personally.</p>
+          </div>
+        </div>
+        <div class="about-pillar">
+          <span class="about-pillar-num">03</span>
+          <div class="about-pillar-content">
+            <h4>Case-Based, Outcome-Focused Methodology</h4>
+            <p>Every session is structured around real corporate scenarios and practical frameworks — with pre-training alignment and post-training support built into every engagement.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="about-right reveal reveal-delay-2">
+      <div class="about-visual">
+        <div class="about-visual-grid"></div>
+        <div class="about-visual-content">
+          <h3>"The only training that genuinely changes behaviour is training that reflects how the real world actually works."</h3>
+          <div class="about-visual-stats">
+            <div>
+              <div class="about-visual-stat-num">80+</div>
+              <div class="about-visual-stat-label">Orgs Trained</div>
+            </div>
+            <div>
+              <div class="about-visual-stat-num">25+</div>
+              <div class="about-visual-stat-label">PSU Clients</div>
+            </div>
+            <div>
+              <div class="about-visual-stat-num">12+</div>
+              <div class="about-visual-stat-label">Sectors</div>
+            </div>
+            <div>
+              <div class="about-visual-stat-num">15+</div>
+              <div class="about-visual-stat-label">Years Expertise</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMMES -->
+<section class="programmes" id="programmes">
+  <div class="programmes-inner">
+    <div class="programmes-header">
+      <div>
+        <div class="section-label reveal">
+          <div class="section-label-line"></div>
+          <span class="section-label-text">Our Programmes</span>
+        </div>
+        <h2 class="section-title reveal reveal-delay-1">Compliance. Business skills.<br><em>Emerging technology.</em></h2>
+      </div>
+      <div class="programmes-tabs reveal reveal-delay-2">
+        <button class="tab-btn active" onclick="switchTab('compliance', this)">Compliance</button>
+        <button class="tab-btn" onclick="switchTab('leadership', this)">Leadership</button>
+        <button class="tab-btn" onclick="switchTab('future', this)">Future Skills</button>
+      </div>
+    </div>
+
+    <div class="programme-panel active" id="panel-compliance">
+      <div class="programme-card reveal">
+        <span class="programme-cat">Compliance</span>
+        <h3 class="programme-title">POSH — IC Member Training & Employee Awareness</h3>
+        <p class="programme-desc">Comprehensive POSH training covering IC member responsibilities, case-handling procedures, and organisation-wide employee awareness. Delivered with the authority of active legal practitioners.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-1">
+        <span class="programme-cat">Compliance</span>
+        <h3 class="programme-title">Labour Laws, Standing Orders & HR Compliance</h3>
+        <p class="programme-desc">Practical coverage of labour legislation, standing orders, and HR compliance frameworks — designed for HR teams, line managers, and compliance officers navigating real regulatory complexity.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-2">
+        <span class="programme-cat">Compliance</span>
+        <h3 class="programme-title">Companies Act, Corporate Governance & Board Responsibilities</h3>
+        <p class="programme-desc">Deep-dive into Companies Act obligations, board governance structures, and director responsibilities — grounded in current legal precedent and live practice.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-1">
+        <span class="programme-cat">Compliance</span>
+        <h3 class="programme-title">SEBI Regulations & Listed Entity Obligations</h3>
+        <p class="programme-desc">SEBI compliance training for listed companies — covering LODR, insider trading regulations, disclosure requirements, and board committee responsibilities.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-2">
+        <span class="programme-cat">Compliance</span>
+        <h3 class="programme-title">ESG Framework Integration & CSR Strategy</h3>
+        <p class="programme-desc">Practical ESG and CSR programming for leadership teams and CSR committees — connecting statutory obligations to genuine strategic opportunity.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-3">
+        <span class="programme-cat">Compliance</span>
+        <h3 class="programme-title">Ethics, Whistleblower Policy & Code of Conduct</h3>
+        <p class="programme-desc">Building ethical cultures through practical training on whistleblower mechanisms, code of conduct implementation, and integrity frameworks across organisational levels.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+
+    <div class="programme-panel" id="panel-leadership">
+      <div class="programme-card reveal">
+        <span class="programme-cat" style="background:#e8f0e8;color:#2d6a2d;">Leadership</span>
+        <h3 class="programme-title">Leadership & Managerial Effectiveness</h3>
+        <p class="programme-desc">Practical leadership development for managers and senior leaders — built on real organisational challenges, not leadership theory. Covers influence, decision-making, and team accountability.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-1">
+        <span class="programme-cat" style="background:#e8f0e8;color:#2d6a2d;">Leadership</span>
+        <h3 class="programme-title">Communication, Influence & Workplace Productivity</h3>
+        <p class="programme-desc">High-impact communication skills for professionals at every level — structured storytelling, executive presence, conflict resolution, and cross-functional influence.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-2">
+        <span class="programme-cat" style="background:#e8f0e8;color:#2d6a2d;">Leadership</span>
+        <h3 class="programme-title">HR Practices for Line Managers</h3>
+        <p class="programme-desc">Equipping line managers with the HR tools they actually need — performance conversations, disciplinary procedures, engagement practices, and people risk management.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-1">
+        <span class="programme-cat" style="background:#e8f0e8;color:#2d6a2d;">Leadership</span>
+        <h3 class="programme-title">Performance Management Frameworks</h3>
+        <p class="programme-desc">Building performance cultures through effective goal-setting, feedback mechanisms, and review processes that drive real accountability and motivation.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-2">
+        <span class="programme-cat" style="background:#e8f0e8;color:#2d6a2d;">Leadership</span>
+        <h3 class="programme-title">Employee Engagement & Organisational Culture</h3>
+        <p class="programme-desc">Understanding what drives engagement and how leaders at every level can build cultures that retain talent, drive discretionary effort, and reduce attrition.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-3">
+        <span class="programme-cat" style="background:#e8f0e8;color:#2d6a2d;">Leadership</span>
+        <h3 class="programme-title">Team Dynamics & Cross-Functional Collaboration</h3>
+        <p class="programme-desc">Building high-performing teams through structured exercises in trust, psychological safety, conflict resolution, and collaborative problem-solving.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+
+    <div class="programme-panel" id="panel-future">
+      <div class="programme-card reveal">
+        <span class="programme-cat" style="background:#e8e8f0;color:#2d2d6a;">Future Skills</span>
+        <h3 class="programme-title">AI for Business — Tools, Use Cases & Workflow Integration</h3>
+        <p class="programme-desc">Practical AI adoption training for business professionals — understanding the tools, identifying real use cases in your function, and integrating AI into daily workflows today.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-1">
+        <span class="programme-cat" style="background:#e8e8f0;color:#2d2d6a;">Future Skills</span>
+        <h3 class="programme-title">Data Analytics for Better Decision-Making</h3>
+        <p class="programme-desc">Non-technical data literacy for managers and business leaders — reading data intelligently, asking the right questions, and making evidence-based decisions with confidence.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-2">
+        <span class="programme-cat" style="background:#e8e8f0;color:#2d2d6a;">Future Skills</span>
+        <h3 class="programme-title">Marketing Strategy & Automation in the Digital Era</h3>
+        <p class="programme-desc">Modern marketing strategy for brand and marketing teams — integrating digital channels, automation tools, and data-driven approaches into effective, scalable go-to-market plans.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-1">
+        <span class="programme-cat" style="background:#e8e8f0;color:#2d2d6a;">Future Skills</span>
+        <h3 class="programme-title">AI Literacy for Non-Technical Employees</h3>
+        <p class="programme-desc">Demystifying AI for the broader workforce — what it is, what it isn't, how to use it responsibly, and how to adopt it confidently without technical expertise.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-2">
+        <span class="programme-cat" style="background:#e8e8f0;color:#2d2d6a;">Future Skills</span>
+        <h3 class="programme-title">Brand Strategy & Competitive Positioning</h3>
+        <p class="programme-desc">Building distinctive brands through strategic clarity — brand architecture, positioning frameworks, competitive differentiation, and customer insight-driven strategy.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="programme-card reveal reveal-delay-3">
+        <span class="programme-cat" style="background:#e8e8f0;color:#2d2d6a;">Future Skills</span>
+        <h3 class="programme-title">Innovation & Future-Readiness for Leadership Teams</h3>
+        <p class="programme-desc">Preparing senior leaders for an uncertain future — innovation thinking, scenario planning, adaptive strategy, and building organisational resilience in fast-changing environments.</p>
+        <a href="#contact" class="programme-link">Enquire <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRAINERS -->
+<section class="trainers" id="trainers">
+  <div class="trainers-inner">
+    <div class="section-label reveal">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">Our Trainers</span>
+    </div>
+    <h2 class="section-title reveal reveal-delay-1">Practitioners first.<br><em>Trainers second.</em></h2>
+    <p class="section-body reveal reveal-delay-2">Every person in our network has spent years inside real organisations dealing with the actual complexity of compliance, leadership, and business growth.</p>
+    <div class="trainers-grid">
+      <div class="trainer-card reveal">
+        <div class="trainer-avatar">RT</div>
+        <div class="trainer-name">CS Rahul Taori</div>
+        <div class="trainer-role">Company Secretary · Corporate Law Expert · Taxmann Author</div>
+        <div class="trainer-exp">15+ years as a practicing CS with live governance, CSR, and compliance mandates. Author of <em>Company Law</em> (Taxmann). Faculty at Allen and ArivuPro.</div>
+        <div class="trainer-tags">
+          <span class="trainer-tag">POSH & IC</span>
+          <span class="trainer-tag">Companies Act</span>
+          <span class="trainer-tag">SEBI</span>
+          <span class="trainer-tag">ESG & CSR</span>
+          <span class="trainer-tag">Governance</span>
+        </div>
+      </div>
+      <div class="trainer-card reveal reveal-delay-1">
+        <div class="trainer-avatar">VA</div>
+        <div class="trainer-name">Ved Agarwal</div>
+        <div class="trainer-role">Former CMO · AI, Marketing & Analytics Specialist</div>
+        <div class="trainer-exp">15+ years in senior marketing at Amazon, Marico, ITC, and Mondelez. Specialist in AI adoption for non-technical business audiences.</div>
+        <div class="trainer-tags">
+          <span class="trainer-tag">AI for Business</span>
+          <span class="trainer-tag">Data Analytics</span>
+          <span class="trainer-tag">Marketing</span>
+          <span class="trainer-tag">Digital Growth</span>
+          <span class="trainer-tag">Brand</span>
+        </div>
+      </div>
+      <div class="trainer-card reveal reveal-delay-2">
+        <div class="trainer-avatar">AA</div>
+        <div class="trainer-name">Ajay Agarwal</div>
+        <div class="trainer-role">Senior Corporate Trainer · 25+ Years</div>
+        <div class="trainer-exp">25+ years delivering large-scale training across PSUs, banks, and manufacturing firms. Equally effective in boardrooms and frontline supervisory sessions.</div>
+        <div class="trainer-tags">
+          <span class="trainer-tag">Leadership</span>
+          <span class="trainer-tag">Motivation</span>
+          <span class="trainer-tag">POSH</span>
+          <span class="trainer-tag">Behavioural</span>
+        </div>
+      </div>
+      <div class="trainer-card reveal reveal-delay-3">
+        <div class="trainer-avatar">PG</div>
+        <div class="trainer-name">Pratibha Ghule</div>
+        <div class="trainer-role">HR Expert · Talent & Compliance Specialist</div>
+        <div class="trainer-exp">Deep practical experience across HR strategy, talent management, and compliance advisory spanning the full employee lifecycle.</div>
+        <div class="trainer-tags">
+          <span class="trainer-tag">HR Compliance</span>
+          <span class="trainer-tag">POSH</span>
+          <span class="trainer-tag">Talent Mgmt</span>
+          <span class="trainer-tag">Engagement</span>
+        </div>
+      </div>
+      <div class="trainer-card reveal reveal-delay-4">
+        <div class="trainer-avatar">RA</div>
+        <div class="trainer-name">Richa Agrawal</div>
+        <div class="trainer-role">Senior Trainer · POSH & Workplace Culture</div>
+        <div class="trainer-exp">Specialist in the human dimension of workplace compliance — IC training, culture-building, and the behavioural shifts that make compliance genuinely real.</div>
+        <div class="trainer-tags">
+          <span class="trainer-tag">POSH</span>
+          <span class="trainer-tag">IC Training</span>
+          <span class="trainer-tag">Workplace Culture</span>
+          <span class="trainer-tag">Sensitisation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTS -->
+<section class="clients" id="clients">
+  <div class="clients-inner">
+    <div class="section-label reveal">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">Client Portfolio</span>
+    </div>
+    <h2 class="section-title reveal reveal-delay-1">Trusted by India's most <em>respected</em> organisations.</h2>
+    <p class="section-body reveal reveal-delay-2">From Navratna PSUs and Fortune-listed multinationals to premier educational institutions — our client list reflects decades of consistent delivery across every major sector.</p>
+    <div class="clients-filters reveal reveal-delay-2">
+      <button class="filter-btn active" onclick="filterClients('all', this)">All Sectors</button>
+      <button class="filter-btn" onclick="filterClients('banking', this)">Banking & Finance</button>
+      <button class="filter-btn" onclick="filterClients('manufacturing', this)">Manufacturing</button>
+      <button class="filter-btn" onclick="filterClients('govt', this)">Govt & PSU</button>
+      <button class="filter-btn" onclick="filterClients('it', this)">IT & Tech</button>
+      <button class="filter-btn" onclick="filterClients('energy', this)">Energy</button>
+      <button class="filter-btn" onclick="filterClients('fmcg', this)">FMCG</button>
+    </div>
+    <div class="clients-sector-grid active" id="sector-all">
+      <div class="all-sectors-grid">
+        <div class="sector-block">
+          <div class="sector-block-title">Banking, Finance & Insurance</div>
+          <div class="sector-block-clients">HDFC Bank · CITI Bank · IDBI Bank · Bajaj Finserv · Canara Bank · Central Bank of India · Reliance General Insurance · Mahindra Insurance</div>
+        </div>
+        <div class="sector-block">
+          <div class="sector-block-title">Manufacturing & Engineering</div>
+          <div class="sector-block-clients">Larsen & Toubro · Siemens · JSW · Tata Steel · Vedanta · Shree Cement · Mitsubishi · Kone · Shell · Kirloskar · Voltas · Snap-on · MSPL</div>
+        </div>
+        <div class="sector-block">
+          <div class="sector-block-title">Government & Public Sector (25+ clients)</div>
+          <div class="sector-block-clients">NTPC · Coal India Ltd · NALCO · Air India · NHPC · BALCO · Mahanadi Coalfields · Damodar Valley Corp · Neyveli Lignite · NEEPCO · Northern Coalfields · THDC · UJVN</div>
+        </div>
+        <div class="sector-block">
+          <div class="sector-block-title">IT, Technology & Electronics</div>
+          <div class="sector-block-clients">IBM · Accenture · Capgemini · Ericsson · Sony · DXC Technologies</div>
+        </div>
+        <div class="sector-block">
+          <div class="sector-block-title">Energy & Power</div>
+          <div class="sector-block-clients">Tata Power · Jindal Steel Power · Sembcorp · CESC Ltd · JSW Energy · Coastal Energy · Lanco Power · Orissa Power Gen. · Sasan Power</div>
+        </div>
+        <div class="sector-block">
+          <div class="sector-block-title">FMCG & Consumer Goods</div>
+          <div class="sector-block-clients">ITC Ltd · Emami · Godfrey Phillips India · SC Johnson · Unicharm · Avery · Gopal Corp</div>
+        </div>
+        <div class="sector-block">
+          <div class="sector-block-title">Healthcare, Pharma & Real Estate</div>
+          <div class="sector-block-clients">Dr. Reddy's Foundation · DLF · Columbia Asia Hospital · MNBC Hospital · Jones Lang LaSalle · Cox & Kings</div>
+        </div>
+        <div class="sector-block">
+          <div class="sector-block-title">Educational Institutions & Industry Bodies</div>
+          <div class="sector-block-clients">CII · FICCI · NIT Raipur · Lucknow University · Doon University · IBS Lucknow · ICWA · National Productivity Council · Bihar Industries Association · Merchants' Chamber of Commerce</div>
+        </div>
+      </div>
+    </div>
+    <div class="clients-sector-grid" id="sector-banking">
+      <div style="margin-bottom:24px;"><div class="sector-header">Banking, Finance & Insurance <span class="sector-count">8 clients</span></div></div>
+      <div class="clients-logo-grid">
+        <div class="client-logo-item">HDFC Bank</div><div class="client-logo-item">CITI Bank</div>
+        <div class="client-logo-item">IDBI Bank</div><div class="client-logo-item">Bajaj Finserv</div>
+        <div class="client-logo-item">Canara Bank</div><div class="client-logo-item">Central Bank of India</div>
+        <div class="client-logo-item">Reliance General Insurance</div><div class="client-logo-item">Mahindra Insurance</div>
+      </div>
+    </div>
+    <div class="clients-sector-grid" id="sector-manufacturing">
+      <div style="margin-bottom:24px;"><div class="sector-header">Manufacturing & Engineering <span class="sector-count">13 clients</span></div></div>
+      <div class="clients-logo-grid">
+        <div class="client-logo-item">Larsen & Toubro</div><div class="client-logo-item">Siemens</div>
+        <div class="client-logo-item">JSW</div><div class="client-logo-item">Tata Steel (TISCO)</div>
+        <div class="client-logo-item">Vedanta</div><div class="client-logo-item">Shree Cement</div>
+        <div class="client-logo-item">Mitsubishi</div><div class="client-logo-item">Kone</div>
+        <div class="client-logo-item">Shell</div><div class="client-logo-item">Kirloskar (East India)</div>
+        <div class="client-logo-item">Voltas</div><div class="client-logo-item">Snap-on</div>
+        <div class="client-logo-item">MSPL</div>
+      </div>
+    </div>
+    <div class="clients-sector-grid" id="sector-govt">
+      <div style="margin-bottom:24px;"><div class="sector-header">Government & Public Sector <span class="sector-count">25+ clients</span></div></div>
+      <div class="clients-logo-grid">
+        <div class="client-logo-item">NTPC</div><div class="client-logo-item">Coal India Ltd</div>
+        <div class="client-logo-item">NALCO</div><div class="client-logo-item">Air India</div>
+        <div class="client-logo-item">NHPC</div><div class="client-logo-item">BALCO</div>
+        <div class="client-logo-item">Mahanadi Coalfields</div><div class="client-logo-item">Damodar Valley Corp</div>
+        <div class="client-logo-item">Neyveli Lignite</div><div class="client-logo-item">NEEPCO</div>
+        <div class="client-logo-item">Northern Coalfields</div><div class="client-logo-item">THDC</div>
+        <div class="client-logo-item">UJVN</div><div class="client-logo-item">Bharat Rail Bijli Co.</div>
+        <div class="client-logo-item">Chhattisgarh Gen. Power</div><div class="client-logo-item">Durgapur Projects</div>
+        <div class="client-logo-item">MPEGCo</div>
+      </div>
+    </div>
+    <div class="clients-sector-grid" id="sector-it">
+      <div style="margin-bottom:24px;"><div class="sector-header">IT, Technology & Electronics <span class="sector-count">6 clients</span></div></div>
+      <div class="clients-logo-grid">
+        <div class="client-logo-item">IBM</div><div class="client-logo-item">Accenture</div>
+        <div class="client-logo-item">Capgemini</div><div class="client-logo-item">Ericsson</div>
+        <div class="client-logo-item">Sony</div><div class="client-logo-item">DXC Technologies</div>
+      </div>
+    </div>
+    <div class="clients-sector-grid" id="sector-energy">
+      <div style="margin-bottom:24px;"><div class="sector-header">Energy & Power <span class="sector-count">9 clients</span></div></div>
+      <div class="clients-logo-grid">
+        <div class="client-logo-item">Tata Power</div><div class="client-logo-item">Jindal Steel Power</div>
+        <div class="client-logo-item">Sembcorp</div><div class="client-logo-item">CESC Ltd</div>
+        <div class="client-logo-item">JSW Energy</div><div class="client-logo-item">Coastal Energy</div>
+        <div class="client-logo-item">Lanco Power</div><div class="client-logo-item">Orissa Power Gen.</div>
+        <div class="client-logo-item">Sasan Power</div>
+      </div>
+    </div>
+    <div class="clients-sector-grid" id="sector-fmcg">
+      <div style="margin-bottom:24px;"><div class="sector-header">FMCG & Consumer Goods <span class="sector-count">7 clients</span></div></div>
+      <div class="clients-logo-grid">
+        <div class="client-logo-item">ITC Ltd</div><div class="client-logo-item">Emami</div>
+        <div class="client-logo-item">Godfrey Phillips India</div><div class="client-logo-item">SC Johnson</div>
+        <div class="client-logo-item">Unicharm</div><div class="client-logo-item">Avery</div>
+        <div class="client-logo-item">Gopal Corp</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="process-inner">
+    <div class="section-label reveal">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">How We Work</span>
+    </div>
+    <h2 class="section-title reveal reveal-delay-1">A process built around <em>your outcomes.</em></h2>
+    <p class="section-body reveal reveal-delay-2">We do not sell training off a shelf. Every engagement begins with a genuine conversation about your organisation, your people, and what success looks like.</p>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="process-step-num">01</div>
+        <div class="process-step-title">Discovery & Requirement Mapping</div>
+        <div class="process-step-desc">We begin by listening — your industry, team profile, existing knowledge base, and the outcomes you are working towards.</div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-num">02</div>
+        <div class="process-step-title">Programme Design & Customisation</div>
+        <div class="process-step-desc">We build a tailored programme — selecting relevant content, real case studies, and practical frameworks. Nothing is repurposed without meaningful adaptation.</div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-num">03</div>
+        <div class="process-step-title">Trainer Matching & Pre-Session Alignment</div>
+        <div class="process-step-desc">We assign the trainer whose expertise, industry experience, and facilitation style best fits your audience and topic.</div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-num">04</div>
+        <div class="process-step-title">Programme Delivery</div>
+        <div class="process-step-desc">Engaging, interactive sessions built for genuine participation — case discussions, structured exercises, Q&A, and real-time problem-solving.</div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-num">05</div>
+        <div class="process-step-title">Post-Training Support & Follow-Through</div>
+        <div class="process-step-desc">We provide reference materials, implementation guides, and ongoing availability for questions. Because behaviour change takes more than a single session.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- FORMATS -->
+<section class="formats" id="formats">
+  <div class="formats-inner">
+    <div class="section-label reveal">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">Training Formats</span>
+    </div>
+    <h2 class="section-title reveal reveal-delay-1">Delivered the way that <em>works for you.</em></h2>
+    <div class="formats-grid">
+      <div class="format-card reveal">
+        <div class="format-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <div class="format-title">In-Person Workshops</div>
+        <div class="format-desc">Full-day or half-day sessions at your premises or an external venue. Ideal for team cohesion, sensitive compliance topics, and large-group delivery.</div>
+      </div>
+      <div class="format-card reveal reveal-delay-1">
+        <div class="format-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div class="format-title">Virtual & Online Delivery</div>
+        <div class="format-desc">Live, interactive sessions for distributed teams. Same engagement standards as in-person — adapted thoughtfully for the virtual environment.</div>
+      </div>
+      <div class="format-card reveal reveal-delay-2">
+        <div class="format-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="format-title">Multi-Session Programmes</div>
+        <div class="format-desc">Structured learning journeys spread over weeks or months — for topics that benefit from spaced practice, reflection, and reinforcement between sessions.</div>
+      </div>
+      <div class="format-card reveal reveal-delay-3">
+        <div class="format-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div class="format-title">Intensive Bootcamps</div>
+        <div class="format-desc">Immersive, high-intensity formats for leadership cohorts, IC member certification, or organisations requiring rapid capability-building across a team.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="testimonials-inner">
+    <div class="section-label reveal">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">What Clients Say</span>
+    </div>
+    <h2 class="section-title reveal reveal-delay-1">Heard in the room. <em>Remembered long after.</em></h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">The POSH training was the most practically useful session our IC members have attended. They left with real tools for real situations — not just statutory awareness.</p>
+        <div class="testimonial-author">— HR Head, Leading BFSI Organisation</div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">The trainer's depth on the Companies Act was exceptional. Our leadership team finally understood their governance obligations in a way that felt actionable, not overwhelming.</p>
+        <div class="testimonial-author">— Company Secretary, Manufacturing Conglomerate</div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">We have worked with several training vendors over the years. The level of customisation and the quality of facilitation here is genuinely different — they understand how our organisation works.</p>
+        <div class="testimonial-author">— L&D Head, Navratna PSU</div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-3">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">The AI for Business workshop changed how our marketing team thinks about their tools. Practical, relevant, and delivered without any of the usual jargon — exactly what we needed.</p>
+        <div class="testimonial-author">— CMO, FMCG Company</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why" id="why">
+  <div class="why-inner">
+    <div class="section-label reveal">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">Why Choose Us</span>
+    </div>
+    <h2 class="section-title reveal reveal-delay-1">The difference is in <em>the depth.</em></h2>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-num">01</div>
+        <div class="why-title">Practitioners in the Room, Not Performers</div>
+        <div class="why-desc">Every trainer is an active practitioner — currently working in legal practice, business advisory, or HR strategy. The credibility participants feel is earned through years of real-world work.</div>
+      </div>
+      <div class="why-card reveal reveal-delay-1">
+        <div class="why-num">02</div>
+        <div class="why-title">Compliance, Capability & Technology — Integrated</div>
+        <div class="why-desc">We cover statutory compliance, leadership development, and AI adoption under one roof. One partner, one quality standard, across your entire training calendar.</div>
+      </div>
+      <div class="why-card reveal reveal-delay-2">
+        <div class="why-num">03</div>
+        <div class="why-title">Customised for Every Engagement, Always</div>
+        <div class="why-desc">We do not batch programmes or recycle slide decks. Every engagement is shaped around your industry, your team, and your specific goals.</div>
+      </div>
+      <div class="why-card reveal reveal-delay-1">
+        <div class="why-num">04</div>
+        <div class="why-title">Legal Rigour That Holds Up Under Scrutiny</div>
+        <div class="why-desc">Our compliance faculty deal with real regulatory questions every week — our training reflects the current state of the law, not an approximation of it.</div>
+      </div>
+      <div class="why-card reveal reveal-delay-2">
+        <div class="why-num">05</div>
+        <div class="why-title">Proven Across Every Major Sector</div>
+        <div class="why-desc">From Navratna PSUs and multinational banks to FMCG leaders and premier educational institutions — our portfolio spans every sector that takes governance seriously.</div>
+      </div>
+      <div class="why-card reveal reveal-delay-3">
+        <div class="why-num">06</div>
+        <div class="why-title">Training That Creates Measurable Change</div>
+        <div class="why-desc">Every programme is evaluated against one question: are participants doing something differently afterwards? Our methodology is built to ensure the answer is always yes.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="faq-inner">
+    <div class="section-label reveal">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">FAQs</span>
+    </div>
+    <h2 class="section-title reveal reveal-delay-1">Everything you need to know <em>before reaching out.</em></h2>
+    <div class="faq-list reveal reveal-delay-2">
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What is the minimum batch size for a programme?
+          <span class="faq-icon"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-answer">We work with groups of any size — from focused leadership cohorts of 10–15 participants to large-group sessions of 100+. For smaller groups, we recommend formats that maximise interactivity; for larger audiences, we structure sessions to maintain engagement throughout.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How much lead time is needed to book a programme?
+          <span class="faq-icon"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-answer">For standard programmes, 2–3 weeks is sufficient. For highly customised engagements — particularly multi-session leadership journeys or compliance programmes requiring deep contextualisation — we recommend 4–6 weeks to ensure the best possible outcome.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Do you provide certificates of completion?
+          <span class="faq-icon"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-answer">Yes. Certificates of participation are issued for all programmes. For POSH training specifically, we provide documentation suitable for demonstrating statutory compliance — including attendance records and programme content summaries.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          In which languages are programmes delivered?
+          <span class="faq-icon"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-answer">Programmes are delivered primarily in English and Hindi. Regional language options are available for select geographies — please discuss your requirements when you reach out and we will confirm availability.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What materials do participants receive?
+          <span class="faq-icon"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-answer">Every programme includes pre-reading materials, participant workbooks, reference frameworks, and post-session guides. For compliance programmes, we also provide statutory reference documents and implementation checklists.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Can programmes be delivered across multiple locations?
+          <span class="faq-icon"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+        </button>
+        <div class="faq-answer">Yes — we have delivered programmes across Mumbai, Delhi, Kolkata, Raipur, Bhubaneswar, Guwahati, and many other locations. Multi-city rollouts are coordinated centrally to ensure content and quality consistency across all sites.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="cta-inner">
+    <div class="cta-left">
+      <div class="section-label reveal" style="margin-bottom:20px;">
+        <div class="section-label-line"></div>
+        <span class="section-label-text">Get in Touch</span>
+      </div>
+      <h2 class="cta-title reveal reveal-delay-1">Ready to build a more <em>compliant, capable</em> team?</h2>
+      <p class="cta-body reveal reveal-delay-2">Every engagement begins with a conversation. Tell us about your organisation, your team, and the outcomes you are working towards — and we will design a programme built specifically around your needs.</p>
+      <div class="cta-contact-items reveal reveal-delay-3">
+        <div class="cta-contact-item">
+          <div class="cta-contact-icon">
+            <!-- SVG -->
+          </div>
+          <span>+91  88283 68033</span>
+        </div>
+        <div class="cta-contact-item">
+          <div class="cta-contact-icon">
+            <!-- SVG -->
+          </div>
+          <a href="mailto:trianovaconsultingroup@gmail.com">trianovaconsultingroup@gmail.com</a>
+        </div>
+        <div class="cta-contact-item">
+          <div class="cta-contact-icon">
+            <!-- SVG -->
+          </div>
+          <span>Response within 24 hours</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-right reveal reveal-delay-2">
+
+      <!-- ✅ FORM START -->
+      <form action="https://formspree.io/f/xbdpjzeg" method="POST">
+        <div class="cta-form" id="contactForm">
+          <h3>Send us an enquiry</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" name="first_name" placeholder="Rajesh">
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" name="last_name" placeholder="Kumar">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Organisation</label>
+            <input type="text" name="organisation" placeholder="Your Company / PSU">
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="you@organisation.com">
+          </div>
+
+          <div class="form-group">
+            <label>Programme of Interest</label>
+            <select name="programme">
+              <option value="" disabled selected>Select a programme area</option>
+              <option>POSH Training</option>
+              <option>Companies Act & Governance</option>
+              <option>Labour Law & HR Compliance</option>
+              <option>SEBI Compliance</option>
+              <option>ESG & CSR</option>
+              <option>Leadership & Managerial Effectiveness</option>
+              <option>AI for Business</option>
+              <option>Data Analytics</option>
+              <option>Marketing Strategy</option>
+              <option>Other / Multiple Programmes</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Your Requirements</label>
+            <textarea name="message" placeholder="Tell us about your team size, preferred format, and any specific objectives..."></textarea>
+          </div>
+
+          <button type="submit" class="form-submit">Send Enquiry →</button>
+
+          <div class="form-note">We respond within 24 hours. No unsolicited follow-ups.</div>
+        </div>
+      </form>
+      <!-- ✅ FORM END -->
+
+      <div class="form-success" id="formSuccess">
+        <h4>Enquiry Received</h4>
+        <p>Thank you for reaching out. We will respond within 24 hours with a tailored response to your requirements.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">RLS & Associates</div>
+      <p class="footer-tagline">Corporate Training & Compliance Solutions — delivering practitioner-led programmes to India's leading organisations since 2010.</p>
+      <div class="footer-cert">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Pan-India Delivery
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Programmes</h4>
+      <ul class="footer-links">
+        <li><a href="#programmes">Compliance & Regulatory</a></li>
+        <li><a href="#programmes">Leadership & Business Skills</a></li>
+        <li><a href="#programmes">Future & Emerging Skills</a></li>
+        <li><a href="#programmes">POSH Training</a></li>
+        <li><a href="#programmes">AI for Business</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul class="footer-links">
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#trainers">Our Trainers</a></li>
+        <li><a href="#clients">Client Portfolio</a></li>
+        <li><a href="#process">How We Work</a></li>
+        <li><a href="#faq">FAQs</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="footer-links">
+        <li><a href="mailto:contact@rlstraining.in">contact@rlstraining.in</a></li>
+        <li><a href="#contact">Send an Enquiry</a></li>
+        <li><a href="#contact">Schedule a Call</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 RLS (P) Ltd. All rights reserved.</div>
+    <div class="footer-reach">Pan-India · Mumbai · Delhi · Kolkata · Raipur · Bhubaneswar</div>
+  </div>
+</footer>
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<script>
+  // CUSTOM CURSOR
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top = mouseY + 'px';
+  });
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    cursorRing.style.left = ringX + 'px';
+    cursorRing.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+  document.querySelectorAll('a, button, .programme-card, .trainer-card, .why-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px'; cursor.style.height = '20px';
+      cursorRing.style.width = '52px'; cursorRing.style.height = '52px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '10px'; cursor.style.height = '10px';
+      cursorRing.style.width = '36px'; cursorRing.style.height = '36px';
+    });
+  });
+
+  // NAV SCROLL
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+    document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  // HAMBURGER
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  function closeMobile() {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+  }
+
+  // REVEAL ON SCROLL
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => observer.observe(r));
+
+  // PROCESS STEPS
+  const processSteps = document.querySelectorAll('.process-step');
+  const processObserver = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 120);
+    });
+  }, { threshold: 0.1 });
+  processSteps.forEach(s => processObserver.observe(s));
+
+  // TABS
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.programme-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+  }
+
+  // CLIENT FILTER
+  function filterClients(sector, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.clients-sector-grid').forEach(g => g.classList.remove('active'));
+    document.getElementById('sector-' + sector).classList.add('active');
+  }
+
+  // FAQ
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // FORM SUBMIT
+  function submitForm() {
+    const fname = document.getElementById('fname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const org = document.getElementById('org').value.trim();
+    if (!fname || !email || !org) {
+      alert('Please fill in your name, organisation, and email to proceed.');
+      return;
+    }
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('formSuccess').style.display = 'block';
+  }
+
+  // COUNTER ANIMATION
+  function animateCounter(el, target, suffix) {
+    let start = 0;
+    const duration = 1800;
+    const step = timestamp => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(eased * target) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+  const statsObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const nums = e.target.querySelectorAll('.hero-stat-num');
+        const data = [{ target: 80, suffix: '+' }, { target: 12, suffix: '+' }, { target: 25, suffix: '+' }, { target: null }];
+        nums.forEach((n, i) => { if (data[i] && data[i].target) animateCounter(n, data[i].target, data[i].suffix); });
+        statsObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+  const statsEl = document.querySelector('.hero-stats');
+  if (statsEl) statsObserver.observe(statsEl);
+</script>
+</body>
+</html>
